@@ -1,0 +1,1721 @@
+/* =====================================================================
+   KIRAWNSAN K — PORTFOLIO STYLES
+   =====================================================================
+   Table of contents:
+     1.  Design tokens (CSS variables)
+     2.  Reset & base
+     3.  Icon system
+     4.  Ambient background layers
+     5.  Custom cursor
+     6.  Decorative signature elements (radar, glitch title)
+     7.  Navigation
+     8.  Hero
+     9.  Buttons
+     10. Section shell (shared by all <section> blocks)
+     11. About
+     12. Skills (3D orbit)
+     13. Projects
+     14. Education
+     15. Lab — rotating world map
+     16. Lab — color transfer keyboard
+     17. Footer / contact
+     18. Scroll-reveal animation
+     19. Accessibility (skip link, focus-visible)
+     20. Scroll progress bar
+     21. Back-to-top button
+     22. Lab — interactive terminal
+     23. Responsive overrides
+   ===================================================================== */
+
+
+/* ---------------------------------------------------------------------
+   1. DESIGN TOKENS
+   --------------------------------------------------------------------- */
+:root {
+  --bg: #090d13;
+  --bg-alt: #0e131c;
+  --surface: #121926;
+  --surface-2: #161f2e;
+  --border: #22303f;
+
+  --text: #e7edf3;
+  --text-dim: #8b9bad;
+  --text-faint: #5a6b7d;
+
+  --accent: #49d9c7;
+  --accent-dim: #2a5d58;
+  --accent-2: #ffb454;
+
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --sans: 'Inter', -apple-system, sans-serif;
+}
+
+
+/* ---------------------------------------------------------------------
+   2. RESET & BASE
+   --------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+section,
+header,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ---------------------------------------------------------------------
+   3. ICON SYSTEM — inline sprite, currentColor driven
+   --------------------------------------------------------------------- */
+.icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: -3px;
+  flex-shrink: 0;
+}
+
+.icon-sm { width: 13px; height: 13px; }
+
+
+/* ---------------------------------------------------------------------
+   4. AMBIENT BACKGROUND LAYERS
+   --------------------------------------------------------------------- */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(73, 217, 199, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73, 217, 199, 0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+}
+
+.bg-glow {
+  position: fixed;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 600px;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse, rgba(73, 217, 199, 0.10), transparent 65%);
+}
+
+#net-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+
+/* ---------------------------------------------------------------------
+   5. CUSTOM CURSOR
+   --------------------------------------------------------------------- */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+}
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(73, 217, 199, 0.5);
+  transition: width .2s, height .2s, border-color .2s, background .2s;
+}
+
+.cursor-ring.hover {
+  width: 56px;
+  height: 56px;
+  border-color: var(--accent-2);
+  background: rgba(255, 180, 84, 0.06);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring { display: none; }
+}
+
+
+/* ---------------------------------------------------------------------
+   6. DECORATIVE SIGNATURE ELEMENTS
+   --------------------------------------------------------------------- */
+
+/* radar sweep */
+.radar {
+  position: absolute;
+  top: 10vh;
+  right: 6vw;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  pointer-events: none;
+  border: 1px solid var(--border);
+  background: repeating-radial-gradient(
+    circle,
+    rgba(73, 217, 199, 0.06) 0,
+    rgba(73, 217, 199, 0.06) 1px,
+    transparent 1px,
+    transparent 33px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(73, 217, 199, 0.55), transparent 28%);
+  animation: sweep 3.4s linear infinite;
+}
+
+.radar::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 8px var(--accent-2);
+}
+
+.radar span {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--text-faint);
+  position: absolute;
+  bottom: -22px;
+  letter-spacing: 0.08em;
+}
+
+@keyframes sweep {
+  to { transform: rotate(360deg); }
+}
+
+/* glitch title */
+h1 { position: relative; }
+
+h1.glitch-active::before,
+h1.glitch-active::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+h1.glitch-active::before {
+  color: #ff5f6d;
+  animation: glitchTop 0.5s steps(2, end) 1;
+}
+
+h1.glitch-active::after {
+  color: var(--accent);
+  animation: glitchBot 0.5s steps(2, end) 1;
+}
+
+@keyframes glitchTop {
+  0%   { clip-path: inset(0 0 80% 0);   transform: translate(0, 0); }
+  30%  { clip-path: inset(10% 0 60% 0); transform: translate(-3px, -1px); }
+  60%  { clip-path: inset(40% 0 20% 0); transform: translate(3px, 1px); }
+  100% { clip-path: inset(0 0 100% 0);  transform: translate(0, 0); }
+}
+
+@keyframes glitchBot {
+  0%   { clip-path: inset(80% 0 0 0);  transform: translate(0, 0); }
+  30%  { clip-path: inset(60% 0 10% 0); transform: translate(3px, 1px); }
+  60%  { clip-path: inset(20% 0 40% 0); transform: translate(-3px, -1px); }
+  100% { clip-path: inset(100% 0 0 0); transform: translate(0, 0); }
+}
+
+
+/* ---------------------------------------------------------------------
+   7. NAVIGATION
+   --------------------------------------------------------------------- */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 6vw;
+  background: rgba(9, 13, 19, 0.75);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+.nav-links a {
+  color: var(--text-dim);
+  transition: color .2s;
+  position: relative;
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  color: var(--accent);
+}
+
+.nav-links a::before {
+  content: './';
+  color: var(--text-faint);
+}
+
+.nav-toggle {
+  display: none;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform .25s ease, opacity .2s ease;
+}
+
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+
+/* ---------------------------------------------------------------------
+   8. HERO
+   --------------------------------------------------------------------- */
+.hero {
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8vh 6vw 6vh;
+  max-width: 900px;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  color: var(--accent);
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eyebrow .bar {
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.avatar-ring {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  margin-bottom: 26px;
+  box-shadow: 0 20px 50px -18px rgba(73, 217, 199, 0.45);
+}
+
+.avatar-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 180deg, var(--accent), var(--accent-2), var(--accent));
+  box-shadow: 0 0 0 1px var(--border);
+  animation: ringspin 10s linear infinite;
+}
+
+.avatar-ring:hover::before { animation-play-state: paused; }
+
+@keyframes ringspin {
+  to { transform: rotate(360deg); }
+}
+
+.avatar-ring .avatar-inner {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  z-index: 1;
+  background: var(--bg);
+  padding: 3px;
+}
+
+.avatar-ring img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+h1 {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+
+.role {
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  color: var(--text-dim);
+  max-width: 640px;
+  margin-bottom: 36px;
+}
+
+.role strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* hero terminal */
+.terminal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  max-width: 640px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
+}
+
+.terminal-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.terminal-head span { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-head span:nth-child(1) { background: #ff5f57; }
+.terminal-head span:nth-child(2) { background: #febc2e; }
+.terminal-head span:nth-child(3) { background: #28c840; }
+
+.terminal-path {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+.terminal-body {
+  padding: 20px 18px;
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  min-height: 90px;
+}
+
+.terminal-body .prompt { color: var(--accent); }
+.terminal-body .out { color: var(--text); }
+
+.cursor {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* -- hero hologram — rotating dot-matrix globe filling the blank right side -- */
+.hero-hologram {
+  position: absolute;
+  top: 16vh;
+  right: 5vw;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  animation: holo-flicker 7s ease-in-out infinite;
+}
+
+.hologram-tag {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  opacity: 0.75;
+  margin-bottom: 10px;
+}
+
+.hologram-globe {
+  width: 260px;
+  max-height: 260px;
+  background: radial-gradient(circle at 50% 42%, rgba(73, 217, 199, 0.14), transparent 70%);
+  filter: drop-shadow(0 0 24px rgba(73, 217, 199, 0.25));
+}
+
+.hologram-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(73, 217, 199, 0.07) 0px,
+    rgba(73, 217, 199, 0.07) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  mix-blend-mode: screen;
+  animation: holo-scan 5s linear infinite;
+}
+
+.hologram-rings {
+  position: absolute;
+  inset: -14px;
+  pointer-events: none;
+  border-radius: 50%;
+  border: 1px solid rgba(73, 217, 199, 0.12);
+  box-shadow: 0 0 0 18px rgba(73, 217, 199, 0.045);
+}
+
+@keyframes holo-scan {
+  from { background-position: 0 0; }
+  to   { background-position: 0 40px; }
+}
+
+/* the projector beam + glowing pad the globe appears to float above */
+.hologram-beam {
+  width: 4px;
+  height: 26px;
+  margin-top: -6px;
+  background: linear-gradient(to bottom, rgba(73, 217, 199, 0.5), transparent);
+}
+
+.hologram-base {
+  width: 120px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(73, 217, 199, 0.35), transparent 72%);
+  box-shadow: 0 0 20px 4px rgba(73, 217, 199, 0.2);
+}
+
+@keyframes holo-flicker {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.65; }
+  98% { opacity: 0.95; }
+  99% { opacity: 0.7; }
+}
+
+@media (max-width: 1300px) {
+  .hero-hologram { display: none; }
+}
+
+
+/* ---------------------------------------------------------------------
+   9. BUTTONS — chamfered, icon-driven, sweep-fill hover
+   --------------------------------------------------------------------- */
+.hero-links {
+  display: flex;
+  gap: 14px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  --notch: 9px;
+  --angle: 0deg;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 12px 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--border);
+  clip-path: polygon(
+    var(--notch) 0, 100% 0, 100% calc(100% - var(--notch)),
+    calc(100% - var(--notch)) 100%, 0 100%, 0 var(--notch)
+  );
+  transition: transform .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transition: transform .35s cubic-bezier(.65, 0, .35, 1);
+}
+
+/* a thin light chasing the button's edge, like current running through a wire */
+@property --angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 1.5px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--angle),
+    transparent 0deg 260deg,
+    var(--accent) 288deg,
+    #eafffa 302deg,
+    var(--accent) 316deg,
+    transparent 344deg 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: btn-border-spin 2.6s linear infinite;
+}
+
+@keyframes btn-border-spin {
+  to { --angle: 360deg; }
+}
+
+.btn .icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform .25s ease;
+}
+
+.btn:hover .icon { transform: translate(3px, -2px); }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--accent);
+  color: #06110f;
+  border-color: var(--accent);
+}
+.btn-primary::before { background: #5ee8d6; transform: scaleX(0); transform-origin: left; }
+.btn-primary:hover::before { transform: scaleX(1); }
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -8px rgba(73, 217, 199, 0.55);
+}
+
+.btn-ghost { color: var(--text); background: transparent; }
+.btn-ghost::before { background: rgba(73, 217, 199, 0.1); transform: scaleX(0); transform-origin: right; }
+.btn-ghost:hover::before { transform: scaleX(1); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+
+/* ---------------------------------------------------------------------
+   10. SECTION SHELL — shared by every <section>
+   --------------------------------------------------------------------- */
+.section {
+  padding: 9vh 6vw;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.section-tag {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.section-tag .num { color: var(--text-faint); }
+
+.section-title {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  margin-bottom: 40px;
+}
+
+
+/* ---------------------------------------------------------------------
+   11. ABOUT
+   --------------------------------------------------------------------- */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.about-text p {
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  font-size: 1.02rem;
+}
+
+.about-text strong { color: var(--text); font-weight: 600; }
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 24px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.info-row:last-child { border-bottom: none; }
+.info-row .k { font-family: var(--mono); color: var(--text-faint); }
+.info-row .v { color: var(--text); text-align: right; }
+
+
+/* ---------------------------------------------------------------------
+   12. SKILLS — 3D orbit + capability cards
+   --------------------------------------------------------------------- */
+.skills-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  margin-bottom: 50px;
+}
+
+.orbit-wrap {
+  position: relative;
+  height: 320px;
+  width: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  flex-shrink: 0;
+}
+
+/* faint scattered stars behind the orbit, for a deep-space backdrop */
+.starfield {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, var(--text-dim) 40%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 75% 15%, var(--text-faint) 40%, transparent 100%),
+    radial-gradient(1px 1px at 85% 65%, var(--text-dim) 40%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 10% 75%, var(--text-faint) 40%, transparent 100%),
+    radial-gradient(1px 1px at 55% 90%, var(--text-dim) 40%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 10%, var(--text-faint) 40%, transparent 100%),
+    radial-gradient(1px 1px at 90% 40%, var(--text-dim) 40%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 30% 55%, var(--text-faint) 40%, transparent 100%);
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.35; }
+  to   { opacity: 0.9; }
+}
+
+/* static tilt so the orbits read as elliptical paths seen at an angle,
+   rather than a flat carousel */
+.orbit-tilt {
+  transform-style: preserve-3d;
+  transform: rotateX(18deg);
+}
+
+.orbit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-style: preserve-3d;
+}
+
+.orbit-outer {
+  width: 170px;
+  height: 170px;
+  animation: spin 20s linear infinite;
+}
+
+.orbit-inner {
+  width: 170px;
+  height: 170px;
+  animation: spin-reverse 13s linear infinite;
+}
+
+.orbit-wrap:hover .orbit { animation-play-state: paused; }
+
+.orbit-node {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  white-space: nowrap;
+  transform-style: preserve-3d;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--accent-dim);
+  border-radius: 20px;
+  padding: 8px 16px;
+}
+
+.orbit-inner .orbit-node {
+  font-size: 0.7rem;
+  padding: 6px 13px;
+  color: var(--accent);
+  border-color: var(--border);
+}
+
+.orbit-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(73, 217, 199, 0.25), transparent 70%);
+  border: 1px solid var(--accent-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+}
+
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotateY(0deg); }
+  to   { transform: translate(-50%, -50%) rotateY(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: translate(-50%, -50%) rotateY(360deg); }
+  to   { transform: translate(-50%, -50%) rotateY(0deg); }
+}
+
+/* -- 3D rotating cube, sits to the front-right of the orbit ---------- */
+.cube-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 220px;
+  width: 140px;
+  perspective: 700px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.45));
+}
+
+.cube {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  transform-style: preserve-3d;
+  animation: cube-spin 15s linear infinite;
+  cursor: pointer;
+}
+
+.cube-wrap:hover .cube { animation-play-state: paused; }
+
+.cube:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 10px;
+  border-radius: 4px;
+}
+
+/* glowing orb nested at the cube's core, seen through its glass-like faces */
+.cube-ball {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #eafffa 0%, var(--accent) 38%, #1c6b63 74%, #081e1c 100%);
+  box-shadow: 0 0 22px 6px rgba(73, 217, 199, 0.55);
+  transform: translateZ(0);
+}
+
+.cube-ball::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0 68%, rgba(255, 255, 255, 0.65) 78%, transparent 88% 100%);
+  mix-blend-mode: screen;
+  animation: ball-shine 3.2s linear infinite;
+}
+
+@keyframes ball-shine {
+  to { transform: rotate(360deg); }
+}
+
+.cube-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text);
+  background: rgba(22, 31, 46, 0.5);
+  backdrop-filter: blur(1px);
+  border: 1px solid var(--accent-dim);
+}
+
+.cube-front  { transform: translateZ(48px); }
+.cube-back   { transform: rotateY(180deg) translateZ(48px); }
+.cube-right  { transform: rotateY(90deg) translateZ(48px); color: var(--accent); }
+.cube-left   { transform: rotateY(-90deg) translateZ(48px); color: var(--accent); }
+.cube-top    { transform: rotateX(90deg) translateZ(48px); background: rgba(18, 25, 38, 0.45); }
+.cube-bottom { transform: rotateX(-90deg) translateZ(48px); background: rgba(18, 25, 38, 0.45); }
+
+@keyframes cube-spin {
+  from { transform: rotateX(0deg) rotateY(0deg); }
+  to   { transform: rotateX(360deg) rotateY(360deg); }
+}
+
+/* quick tactile "kick" the cube plays on click, layered on top of its
+   continuous tumble */
+@keyframes cube-kick {
+  0%   { scale: 1; }
+  35%  { scale: 1.22; }
+  100% { scale: 1; }
+}
+
+.cube-kick { animation: cube-kick 0.5s cubic-bezier(.2, .8, .3, 1.3); }
+
+/* -- click-triggered background pulse -------------------------------- */
+.warp-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 30px 4px rgba(73, 217, 199, 0.35);
+  pointer-events: none;
+  z-index: 5;
+  animation: warp-ring 1.1s cubic-bezier(.15, .7, .3, 1) forwards;
+}
+
+@keyframes warp-ring {
+  from { width: 6px; height: 6px; margin: -3px 0 0 -3px; opacity: 0.9; border-width: 2px; }
+  to   { width: 1600px; height: 1600px; margin: -800px 0 0 -800px; opacity: 0; border-width: 1px; }
+}
+
+.bg-grid,
+.bg-glow {
+  transition: transform 0.7s cubic-bezier(.2, .8, .2, 1), filter 0.7s ease, opacity 0.7s ease;
+}
+
+.bg-grid.warp { transform: scale(1.05) translateY(-8px); filter: brightness(1.6); }
+.bg-glow.warp { transform: translateX(-50%) scale(1.12); filter: brightness(1.5); opacity: 0.85; }
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.skill-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.skill-card h3 {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.pill {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+
+/* ---------------------------------------------------------------------
+   13. PROJECTS
+   --------------------------------------------------------------------- */
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.project {
+  background: var(--bg-alt);
+  background-image: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(73, 217, 199, 0.08), transparent 60%);
+  padding: 32px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: start;
+  transition: background .2s;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.project:hover { background: var(--surface); }
+
+.project-index {
+  font-family: var(--mono);
+  color: var(--text-faint);
+  font-size: 0.85rem;
+  padding-top: 3px;
+}
+
+.project-title {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+
+.project-desc {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  max-width: 60ch;
+  margin-bottom: 14px;
+}
+
+.project-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.tag {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  background: rgba(73, 217, 199, 0.08);
+  border: 1px solid var(--accent-dim);
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+
+.status {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  height: fit-content;
+  border: 1px solid;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-research {
+  color: var(--accent-2);
+  border-color: rgba(255, 180, 84, 0.4);
+  background: rgba(255, 180, 84, 0.08);
+}
+
+.status-shipped {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: rgba(73, 217, 199, 0.08);
+}
+
+
+/* ---------------------------------------------------------------------
+   14. EDUCATION
+   --------------------------------------------------------------------- */
+.edu-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.edu-card h3 { font-family: var(--mono); font-size: 1.1rem; margin-bottom: 6px; }
+.edu-card p { color: var(--text-dim); font-size: 0.92rem; }
+
+.edu-badge {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  padding: 8px 16px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+
+/* ---------------------------------------------------------------------
+   15. LAB — rotating world map
+   --------------------------------------------------------------------- */
+.lab-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.lab-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.lab-card h3 {
+  font-family: var(--mono);
+  font-size: 0.92rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.lab-card h3 .lab-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.lab-caption {
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  color: var(--text-faint);
+}
+
+.globe-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 45%, rgba(73, 217, 199, 0.07), transparent 68%);
+  border-radius: 10px;
+  cursor: grab;
+}
+
+.globe-wrap:active { cursor: grabbing; }
+
+#globeCanvas,
+.globe-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.globe-pin-label {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--accent-2);
+  background: rgba(9, 13, 19, 0.85);
+  border: 1px solid rgba(255, 180, 84, 0.35);
+  border-radius: 5px;
+  padding: 3px 8px;
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .25s ease;
+  transform: translate(-50%, -140%);
+}
+
+.globe-pin-label.on { opacity: 1; }
+
+.globe-hint {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+
+/* ---------------------------------------------------------------------
+   16. LAB — color transfer keyboard
+   --------------------------------------------------------------------- */
+.keyboard-viz {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.kb-row { display: flex; gap: 6px; justify-content: center; }
+
+.key {
+  position: relative;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  /* size off the row's own width (10 keys + 9 gaps) so rows never overflow the card, at any viewport */
+  width: calc((100% - 54px) / 10);
+  max-width: 30px;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .12s ease, color .12s ease, box-shadow .12s ease, border-color .12s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.key.wide { width: calc(((100% - 54px) / 10) * 1.7 + 6px); }
+
+.key.active {
+  color: #06110f;
+  font-weight: 700;
+  border-color: transparent;
+  animation: keyPop .32s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+@keyframes keyPop {
+  0%   { transform: translateY(0) scale(1); }
+  35%  { transform: translateY(-6px) scale(1.18) rotate(-2deg); }
+  65%  { transform: translateY(-2px) scale(1.1) rotate(1deg); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+.key-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: rippleOut .5s ease-out forwards;
+}
+
+@keyframes rippleOut {
+  0%   { width: 6px;  height: 6px;  opacity: 0.75; }
+  100% { width: 70px; height: 70px; opacity: 0; }
+}
+
+.kb-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 0;
+  border-radius: 12px;
+  mix-blend-mode: screen;
+}
+
+.flying-orb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 0 12px 2px currentColor;
+}
+
+.key-readout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+
+.key-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  transition: background .15s ease;
+  animation: swatchPulse .35s ease;
+}
+
+@keyframes swatchPulse {
+  0%   { transform: scale(0.55); box-shadow: 0 0 0 0 currentColor; }
+  50%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+.key-hex {
+  color: var(--text);
+  min-width: 64px;
+}
+
+.key-hex,
+#keyChar {
+  display: inline-block;
+}
+
+.key-hex.flash,
+#keyChar.flash {
+  animation: textFlash .35s ease;
+}
+
+@keyframes textFlash {
+  0%   { transform: translateY(-3px); opacity: 0.3; letter-spacing: 0.04em; }
+  100% { transform: translateY(0);    opacity: 1;   letter-spacing: normal; }
+}
+
+.color-trail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  min-height: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.trail-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  animation: swatchIn .3s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+@keyframes swatchIn {
+  0%   { transform: scale(0)   translateY(-6px); opacity: 0; }
+  60%  { transform: scale(1.3) translateY(0);    opacity: 1; }
+  100% { transform: scale(1)   translateY(0);    opacity: 1; }
+}
+
+
+/* ---------------------------------------------------------------------
+   17. FOOTER / CONTACT
+   --------------------------------------------------------------------- */
+footer {
+  padding: 9vh 6vw 6vh;
+  border-top: 1px solid var(--border);
+  margin-top: 6vh;
+}
+
+.footer-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+footer h2 {
+  font-family: var(--mono);
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  margin-bottom: 18px;
+}
+
+footer p.sub { color: var(--text-dim); margin-bottom: 32px; }
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.foot-bottom {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+
+/* ---------------------------------------------------------------------
+   18. SCROLL-REVEAL ANIMATION
+   --------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px) rotateX(6deg);
+  transform-origin: top center;
+  transition: opacity .7s ease, transform .7s ease;
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0) rotateX(0deg);
+}
+
+.section,
+footer {
+  perspective: 1400px;
+}
+
+
+/* ---------------------------------------------------------------------
+   19. ACCESSIBILITY — skip link, focus-visible
+   --------------------------------------------------------------------- */
+.skip-link {
+  position: fixed;
+  top: -60px;
+  left: 16px;
+  z-index: 1000;
+  background: var(--accent);
+  color: #06110f;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 18px;
+  border-radius: 6px;
+  transition: top .2s ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+
+/* ---------------------------------------------------------------------
+   20. SCROLL PROGRESS BAR
+   --------------------------------------------------------------------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  z-index: 60;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 8px rgba(73, 217, 199, 0.6);
+  transition: width .1s linear;
+}
+
+
+/* ---------------------------------------------------------------------
+   21. BACK-TO-TOP BUTTON
+   --------------------------------------------------------------------- */
+.back-to-top {
+  position: fixed;
+  right: 26px;
+  bottom: 26px;
+  z-index: 55;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity .25s ease, transform .25s ease, color .2s ease, border-color .2s ease;
+}
+
+.back-to-top.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+
+/* ---------------------------------------------------------------------
+   22. LAB — INTERACTIVE TERMINAL
+   --------------------------------------------------------------------- */
+.terminal-lab-card {
+  grid-column: 1 / -1;
+}
+
+.mini-terminal {
+  max-width: 100%;
+}
+
+.mini-terminal-output {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  height: 200px;
+  overflow-y: auto;
+  padding: 16px 18px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mini-terminal-output .line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mini-terminal-output .line.cmd { color: var(--text-faint); }
+.mini-terminal-output .line.cmd::before { content: 'kirawnsan@dev:~/lab$ '; color: var(--accent); }
+.mini-terminal-output .line.out { color: var(--text-dim); }
+.mini-terminal-output .line.err { color: #ff8577; }
+.mini-terminal-output .line.accent { color: var(--accent); }
+
+.mini-terminal-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px 16px;
+  border-top: 1px solid var(--border);
+  transition: background .2s ease;
+}
+
+.mini-terminal-input-row:focus-within {
+  background: rgba(73, 217, 199, 0.05);
+}
+
+.mini-terminal-input-row .prompt {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--accent);
+  white-space: nowrap;
+  cursor: text;
+}
+
+.mini-terminal-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text);
+  caret-color: var(--accent);
+}
+
+.mini-terminal-input::placeholder { color: var(--text-faint); }
+
+
+/* ---------------------------------------------------------------------
+   23. RESPONSIVE OVERRIDES
+   --------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+  .radar { display: none; }
+}
+
+@media (max-width: 860px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr 1fr; }
+  .project { grid-template-columns: 1fr; gap: 12px; }
+  .project-index { display: none; }
+  .lab-grid { grid-template-columns: 1fr; }
+  .skills-visual { gap: 30px; }
+  .orbit-wrap { height: 260px; width: 260px; }
+  .cube-wrap { height: 180px; width: 110px; }
+}
+
+/* the 7-link inline nav (brand + about/experience/skills/projects/education/lab/contact)
+   starts wrapping and overflowing well above the general mobile breakpoint below —
+   around ~840px — so it gets its own, earlier switch to the hamburger menu. */
+@media (max-width: 900px) {
+  .nav-toggle { display: flex; }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: rgba(9, 13, 19, 0.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .3s ease, opacity .25s ease;
+  }
+
+  .nav-links.open {
+    max-height: 60vh;
+    opacity: 1;
+  }
+
+  .nav-links a {
+    padding: 14px 6vw;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links a:last-child { border-bottom: none; }
+}
+
+@media (max-width: 640px) {
+  .skills-grid { grid-template-columns: 1fr; }
+  .section { padding: 7vh 6vw; }
+  .edu-card { flex-direction: column; align-items: flex-start; }
+  .lab-card { padding: 18px; }
+
+  .skills-visual { flex-direction: column; gap: 10px; }
+  .orbit-wrap { height: 240px; width: 240px; }
+  .cube-wrap { height: 140px; width: 140px; }
+}
+
+@media (max-width: 480px) {
+  .key { font-size: 0.62rem; }
+  .mini-terminal-output { height: 160px; }
+  .back-to-top { right: 16px; bottom: 16px; width: 40px; height: 40px; }
+
+  /* "kirawnsan@dev:~/lab$" eats most of the row on very small phones —
+     collapse it to "$" so the input field keeps room to actually type in. */
+  .mini-terminal-input-row .prompt-full { display: none; }
+}
